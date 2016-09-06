@@ -1,0 +1,39 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_emptyview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mibai" >
+
+    <TextView
+        android:id="@+id/layout_tv_emptyview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:text="加载中..."
+        android:textSize="15sp"
+        android:textStyle="italic"
+        android:layout_marginRight="10dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/layout_iv_emptyview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/icon_daikuan_tip"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/pb_emptyview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_tv_emptyview"
+        android:layout_centerHorizontal="true"
+        android:indeterminateDrawable="@drawable/progressbar" />
+
+</RelativeLayout>

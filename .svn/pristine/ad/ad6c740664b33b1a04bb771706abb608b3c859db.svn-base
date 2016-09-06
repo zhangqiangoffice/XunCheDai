@@ -1,0 +1,188 @@
+package com.minsheng.app.xunchedai.loan.bean;
+
+/**
+ * Created by Administrator on 2016/8/9.
+ * 贷款申请的实体类
+ */
+public class Loan {
+    private long id;
+    private String name;//申请人姓名
+    private int state;//申请状态
+    private String phone;//申请人电话
+    private String warranty;//保单照片
+    private String invoice;
+    private String care_card;
+    private String idcard1;//借贷人身份证正面
+    private String idcard2;//借贷人身份证反面
+    private String bankcard1;//客户储蓄卡正面
+    private String bankcard2;//客户储蓄卡反面
+    private String face;//面签照片
+    private String license;//行驶证
+    private String agreement;//借贷申请协议
+    private String reason;//原因
+    private String insurance_amount;//商业险金额
+    private String protection_date;//起保日期
+    private String installment;//分期数
+    private String loan_amount;//可贷款额度
+    private String edit_date;//编辑日期
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getWarranty() {
+        return warranty;
+    }
+
+    public void setWarranty(String warranty) {
+        this.warranty = warranty;
+    }
+
+    public String getIdcard1() {
+        return idcard1;
+    }
+
+    public void setIdcard1(String idcard1) {
+        this.idcard1 = idcard1;
+    }
+
+    public String getIdcard2() {
+        return idcard2;
+    }
+
+    public void setIdcard2(String idcard2) {
+        this.idcard2 = idcard2;
+    }
+
+    public String getBankcard1() {
+        return bankcard1;
+    }
+
+    public void setBankcard1(String bankcard1) {
+        this.bankcard1 = bankcard1;
+    }
+
+    public String getBankcard2() {
+        return bankcard2;
+    }
+
+    public void setBankcard2(String bankcard2) {
+        this.bankcard2 = bankcard2;
+    }
+
+    public String getFace() {
+        return face;
+    }
+
+    public void setFace(String face) {
+        this.face = face;
+    }
+
+    public String getLicense() {
+        return license;
+    }
+
+    public void setLicense(String license) {
+        this.license = license;
+    }
+
+    public String getAgreement() {
+        return agreement;
+    }
+
+    public void setAgreement(String agreement) {
+        this.agreement = agreement;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getInsurance_amount() {
+        return insurance_amount;
+    }
+
+    public void setInsurance_amount(String insurance_amount) {
+        this.insurance_amount = insurance_amount;
+    }
+
+    public String getProtection_date() {
+        return protection_date;
+    }
+
+    public void setProtection_date(String protection_date) {
+        this.protection_date = protection_date;
+    }
+
+    public String getInstallment() {
+        return installment;
+    }
+
+    public void setInstallment(String installment) {
+        this.installment = installment;
+    }
+
+    public String getLoan_amount() {
+        return loan_amount;
+    }
+
+    public void setLoan_amount(String loan_amount) {
+        this.loan_amount = loan_amount;
+    }
+
+    public String getInvoice() {
+        return invoice;
+    }
+
+    public void setInvoice(String invoice) {
+        this.invoice = invoice;
+    }
+
+    public String getCare_card() {
+        return care_card;
+    }
+
+    public void setCare_card(String care_card) {
+        this.care_card = care_card;
+    }
+
+    public String getEdit_date() {
+        return edit_date;
+    }
+
+    public void setEdit_date(String edit_date) {
+        this.edit_date = edit_date;
+    }
+}

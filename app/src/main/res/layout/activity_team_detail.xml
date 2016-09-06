@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mibai"
+    >
+    <include layout="@layout/activity_blue_title"/>
+    <include
+        android:id="@+id/layout_emptyview"
+        layout="@layout/layout_emptyview"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/blue"
+        >
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="庄周"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/tv_user_position"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="五河督训区 | 督训长"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="10dp"
+            />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/txt_gray"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="个人当日业绩 (￥)"
+            android:textColor="@color/txt_black"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:id="@+id/tv_day_yj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="4000"
+            android:textSize="18sp"
+            android:textColor="@color/txt_red"
+            android:gravity="center_vertical|right"
+            android:layout_marginRight="10dp"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/txt_gray"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="个人当月业绩 (￥)"
+            android:textColor="@color/txt_black"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:id="@+id/tv_month_yj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="90000"
+            android:textSize="18sp"
+            android:textColor="@color/txt_orange"
+            android:gravity="center_vertical|right"
+            android:layout_marginRight="10dp"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/txt_gray"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="个人当日业绩 (￥)"
+            android:textColor="@color/txt_black"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:padding="10dp"
+            />
+
+        <TextView
+            android:id="@+id/tv_total_yj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="90987"
+            android:textSize="18sp"
+            android:textColor="@color/txt_green"
+            android:gravity="center_vertical|right"
+            android:layout_marginRight="10dp"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/txt_gray"/>
+
+</LinearLayout>

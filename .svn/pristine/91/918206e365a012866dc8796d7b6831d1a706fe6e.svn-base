@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mibai"
+    >
+
+    <include layout="@layout/activity_blue_title" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/index_bg"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/bg_car"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/index_car"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="50dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_bg_white"
+            android:layout_marginTop="160dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:paddingRight="15dp"
+            android:paddingLeft="15dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="10dp"
+            android:orientation="horizontal">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_marginTop="0dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="14sp"
+                        android:layout_height="14sp"
+                        android:src="@mipmap/icon_money"
+                        android:layout_gravity="center_vertical|right"
+                        android:layout_marginRight="15dp" />
+                    <EditText
+                        android:id="@+id/installment_sum"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:hint="输入商业险金额"
+                        android:textSize="16sp"
+                        android:textColorHint="@color/deep_orange"
+                        android:textColor="@color/deep_orange"
+                        android:inputType="numberDecimal"
+                        android:background="@null"
+                        />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/gray"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="14sp"
+                        android:layout_height="14sp"
+                        android:src="@mipmap/icon_calendar"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="15dp" />
+
+                    <TextView
+                        android:id="@+id/installment_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:text="请选择保险起期"
+                        android:textSize="16sp"
+                        android:textColor="@color/deep_orange"
+                        android:inputType="numberDecimal"
+                        android:gravity="center_vertical"
+                        android:background="@null"
+                        />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/count"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:text="试算"
+                android:textSize="20sp"
+                android:background="@drawable/button_bg_blue"
+                android:textColor="@color/white"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="20dp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@mipmap/pic_gold"
+            android:layout_marginTop="110dp"
+            android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:id="@+id/count_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="260dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="可贷款金额："
+                    />
+
+                <ImageView
+                    android:layout_width="14sp"
+                    android:layout_height="14sp"
+                    android:src="@mipmap/icon_money" />
+
+                <TextView
+                    android:id="@+id/loan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/deep_orange"
+                    android:textSize="24sp"
+                    />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_bg_white"
+                android:padding="15dp"
+                android:orientation="vertical"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="分期"
+                        android:textAlignment="center"
+                        />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="每期本金"
+                        android:gravity="right"
+                        />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="每期利息"
+                        android:gravity="right"
+                        />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="每期应还款"
+                        android:gravity="right"
+                        />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/gray"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="5dp"
+                    />
+
+                <ListView
+                    android:id="@+id/schemes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="#00000000"
+                    android:dividerHeight="0dp"
+
+                    />
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+</LinearLayout>

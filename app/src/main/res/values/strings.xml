@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">迅车贷</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="pull_down_refresh_label">下拉可以刷新</string>
+    <string name="pull_down_release_label">松开立即刷新</string>
+    <string name="pull_down_refreshing_label">正在刷新数据</string>
+    <string name="pull_up_load_label">上拉加载</string>
+    <string name="pull_up_loading_label">正在加载数据</string>
+    <string name="sign">
+        \t总则
+        \n
+        \t\t\t用户在接受民盛迅车贷服务之前，请务必仔细阅读本条款并同意本声明。
+        \n
+        \t\t\t用户直接或通过各类方式（如站外API引用等）间接使用迅车贷服务和数据的行为，都将被视作已无条件接受本声明所涉全部内容；若用户对本声明的任何条款有异议，请停止使用保险岛所提供的全部服务。
+        \n\n
+        \t第一条
+        \n
+       \t\t\t用户以各种方式使用迅车贷服务和数据（包括但不限于发表、宣传介绍、转载、浏览及利用迅车贷或迅车贷用户发布内容）的过程中，不得以任何方式利用迅车贷直接或间接从事违反中国法律、以及社会公德的行为，且用户应当恪守下述承诺：
+        \n
+        \t\t\t1. 发布、转载或提供的内容符合中国法律、社会公德；
+        \n
+        \t\t\t2. 不得干扰、损害和侵犯迅车贷的各种合法权利与利益；
+        \n
+        \t\t\t3. 遵守迅车贷以及与之相关的网络服务的协议、指导原则、管理细则等；
+        \n\n
+        \t\t\t迅车贷有权对违反上述承诺的内容予以删除。
+        \n\n
+        \t第二条
+        \n
+        \t\t\t1. 迅车贷仅为用户发布的内容提供存储空间，迅车贷不对用户发表、转载的内容提供任何形式的保证：不保证内容满足您的要求，不保证迅车贷的服务不会中断。因网络状况、通讯线路、第三方网站或管理部门的要求等任何原因而导致您不能正常使用，迅车贷不承担任何法律责任。
+        \n
+        \t\t\t2. 用户在迅车贷发表的内容（包含但不限于迅车贷目前各产品功能里的内容）仅表明其个人的立场和观点，并不代表迅车贷的立场或观点。作为内容的发表者，需自行对所发表内容负责，因所发表内容引发的一切纠纷，由该内容的发表者承担全部法律及连带责任。迅车贷不承担任何法律及连带责任。
+        \n
+        \t\t\t3. 用户在迅车贷发布侵犯他人知识产权或其他合法权益的内容，迅车贷有权予以删除，并保留移交司法机关处理的权利。
+        \n
+        \t\t\t4. 个人或单位如认为迅车贷上存在侵犯自身合法权益的内容，应准备好具有法律效应的证明材料，及时与迅车贷取得联系，以便迅车贷迅速做出处理。
+        \n\n
+        \t附则
+        \n
+        \t\t\t对免责声明的解释、修改及更新权均属于迅车贷所有。
+    </string>
+
+    <string name="pickerview_cancel">取消</string>
+    <string name="pickerview_submit">确定</string>
+    <string name="pickerview_year">年</string>
+    <string name="pickerview_month">月</string>
+    <string name="pickerview_day">日</string>
+    <string name="pickerview_hours">时</string>
+    <string name="pickerview_minutes">分</string>
+    <string name="pickerview_seconds">秒</string>
+</resources>

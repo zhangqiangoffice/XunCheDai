@@ -1,0 +1,1008 @@
+package com.minsheng.app.xunchedai.loan.activities;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.lidroid.xutils.DbUtils;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.ViewUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
+import com.lidroid.xutils.view.annotation.ViewInject;
+import com.minsheng.app.xunchedai.R;
+import com.minsheng.app.xunchedai.base.BaseActivity;
+import com.minsheng.app.xunchedai.base.whell.TimePopupWindow;
+import com.minsheng.app.xunchedai.home.bean.Scheme;
+import com.minsheng.app.xunchedai.loan.adapters.SchemeAdapter;
+import com.minsheng.app.xunchedai.loan.bean.Loan;
+import com.minsheng.app.xunchedai.login.LoginActivity;
+import com.minsheng.app.xunchedai.main.MainActivity;
+import com.minsheng.app.xunchedai.utils.APIUtils;
+import com.minsheng.app.xunchedai.utils.CheckFormatUtils;
+import com.minsheng.app.xunchedai.utils.DBManager;
+import com.minsheng.app.xunchedai.utils.DateUtils;
+import com.minsheng.app.xunchedai.utils.NetWorkUtils;
+import com.minsheng.app.xunchedai.utils.PopupWindowUtils;
+import com.minsheng.app.xunchedai.utils.PreferenceUtils;
+import com.minsheng.app.xunchedai.utils.T;
+import com.minsheng.app.xunchedai.utils.WebServiceUrl;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * Created by Administrator on 2016/8/5.
+ * 新增贷款//申请详情界面
+ */
+public class AddLoanActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener{
+
+    public static final int STATE_NEW = -1;
+    public static final int STATE_WAITING = 0;
+    public static final int STATE_PASSED = 1;
+    public static final int STATE_REBUT = 2;
+    public static final int STATE_REJECT = 3;
+    public static final int STATE_PAID = 4;
+    public static final int STATE_BACK = 5;
+    public static final int STATE_OVERDUE = 6;
+    public static final int STATE_HANDLED = 7;
+
+    /*
+    -1 = 新增
+    0=待审核
+    1=审核通过
+    2=审核驳回
+    3=拒绝申请
+    4=打款完成
+    5=还款完成
+    6=逾期未处理
+    7=逾期已处理
+     */
+
+    @ViewInject(R.id.activity_concat_back )
+    private ImageView iv_back;
+    @ViewInject(R.id.tv_activity_concat_title)
+    private TextView tv_title;
+    @ViewInject(R.id.comment_sure)
+    private TextView  tv_save;
+    @ViewInject(R.id.add_warranty)
+    private LinearLayout ll_add_warranty;
+    @ViewInject(R.id.add_invoice)
+    private LinearLayout ll_add_invoice;
+    @ViewInject(R.id.add_care_card)
+    private LinearLayout ll_add_care_card;
+    @ViewInject(R.id.add_idcard1)
+    private LinearLayout ll_add_idcard1;
+    @ViewInject(R.id.add_idcard2)
+    private LinearLayout ll_add_idcard2;
+    @ViewInject(R.id.add_bankcard1)
+    private LinearLayout ll_add_bankcard1;
+    @ViewInject(R.id.add_bankcard2)
+    private LinearLayout ll_add_bankcard2;
+    @ViewInject(R.id.add_face)
+    private LinearLayout ll_add_face;
+    @ViewInject(R.id.select_installment)
+    private RelativeLayout rl_select_installment;
+    @ViewInject(R.id.add_license)
+    private LinearLayout ll_add_license;
+    @ViewInject(R.id.add_agreement)
+    private LinearLayout ll_add_agreement;
+    @ViewInject(R.id.upload_warranty)
+    private TextView tv_upload_warranty;
+    @ViewInject(R.id.upload_invoice)
+    private TextView tv_upload_invoice;
+    @ViewInject(R.id.upload_care_card)
+    private TextView tv_upload_care_card;
+    @ViewInject(R.id.upload_idcard1)
+    private TextView tv_upload_idcard1;
+    @ViewInject(R.id.upload_idcard2)
+    private TextView tv_upload_idcard2;
+    @ViewInject(R.id.upload_bankcard1)
+    private TextView tv_upload_bankcard1;
+    @ViewInject(R.id.upload_bankcard2)
+    private TextView tv_upload_bankcard2;
+    @ViewInject(R.id.upload_face)
+    private TextView tv_upload_face;
+    @ViewInject(R.id.upload_license)
+    private TextView tv_upload_license;
+    @ViewInject(R.id.upload_agreement)
+    private TextView tv_upload_agreement;
+    @ViewInject(R.id.apply_name)
+    private EditText et_apply_name;
+    @ViewInject(R.id.apply_phone)
+    private EditText et_apply_phone;
+    @ViewInject(R.id.iv_update_logo)
+    private ImageView iv_update_logo;
+    @ViewInject(R.id.tv_update_txt)
+    private TextView tv_update_txt;
+    @ViewInject(R.id.insurance_amount)
+    private EditText et_insurance_amount;
+    @ViewInject(R.id.protection_date)
+    private TextView tv_protection_date;
+    @ViewInject(R.id.rl_date)
+    private RelativeLayout rl_date;
+    @ViewInject(R.id.parent)
+    private LinearLayout ll_parent;
+    @ViewInject(R.id.installment)
+    private TextView tv_installment;
+    @ViewInject(R.id.loan_amount)
+    private TextView tv_loan_amount;
+    private HttpUtils httpUtils;
+    private String loan_id;
+    private Loan loan;
+
+    private String str_name, str_phone, str_warranty, str_idcard1, str_idcard2, str_bankcard1, str_bankcard2, str_face, str_license, str_agreement, str_insurance_amount, str_protection_date, str_installment, str_loan_amount ,str_invoice, str_care_card, str_reason;
+    private Double loan_amount;
+    private Date date_insurance;
+    private SimpleDateFormat format;
+    private long now_5_millis, insurance_millis;
+    private boolean is_new, is_from_index;
+    private int state;
+    private List<Scheme> list_scheme;
+    private PopupWindow popupWindow;
+    private SchemeAdapter adapter;
+    private TimePopupWindow pwTime;
+    private Intent intent_before;
+    private DbUtils db;
+    private boolean isNull=false;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_loan);
+        ViewUtils.inject(this);
+        initView();
+
+    }
+
+    /**
+     * 初始化组件
+     */
+    private void initView() {
+        httpUtils = new HttpUtils();
+        db= DBManager.dbUtils(this);
+        pwTime = new TimePopupWindow(this, TimePopupWindow.Type.YEAR_MONTH_DAY, this);
+        pwTime.setTime(new Date());
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        format.setLenient(false);
+        list_scheme = new ArrayList<>();
+        intent_before = getIntent();
+        loan_id = intent_before.getStringExtra("loan_id");
+        str_installment = intent_before.getStringExtra("installment");
+        //loan_id为空是新建申请,有值是查看详情
+        is_new = TextUtils.isEmpty(loan_id);
+        //判断是否是从首页试算转过来的
+        is_from_index = !TextUtils.isEmpty(str_installment);
+
+        showView();
+
+        iv_back.setVisibility(View.VISIBLE);
+        ll_add_warranty.setOnClickListener(this);
+        ll_add_invoice.setOnClickListener(this);
+        ll_add_care_card.setOnClickListener(this);
+        ll_add_idcard1.setOnClickListener(this);
+        ll_add_idcard2.setOnClickListener(this);
+        ll_add_bankcard1.setOnClickListener(this);
+        ll_add_bankcard2.setOnClickListener(this);
+        ll_add_face.setOnClickListener(this);
+        ll_add_license.setOnClickListener(this);
+        ll_add_agreement.setOnClickListener(this);
+        tv_save.setOnClickListener(this);
+        rl_date.setOnClickListener(this);
+
+
+        //点击空白处，使et_insurance_amount失去焦点
+        ll_parent.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
+                ll_parent.setFocusable(true);
+                ll_parent.setFocusableInTouchMode(true);
+                ll_parent.requestFocus();
+
+                return false;
+            }
+        });
+
+        //当商业险金额变动时，用于计算可贷款额度
+        et_insurance_amount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    if (checkMount() && checkDate()) {
+                        countLoanMount();
+                    }
+
+                }
+
+            }
+        });
+
+        //当投保日期变化时，用于计算可贷款额度
+        tv_protection_date.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(checkDate() && checkMount()) {
+                    countLoanMount();
+                }
+            }
+        });
+
+        //时间选择后回
+        pwTime.setOnTimeSelectListener(new TimePopupWindow.OnTimeSelectListener() {
+
+            @Override
+            public void onTimeSelect(Date date) {
+                tv_protection_date.setText(getTime(date));
+                tv_protection_date.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.gray_3));
+            }
+        });
+
+    }
+
+    //时间转换
+    public static String getTime(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
+
+
+    /**
+     * 显示贷宽详情页的布局
+     */
+    public void showView() {
+        if (is_new) {
+            tv_title.setText("新增申请");
+            tv_save.setText("提交");
+            tv_save.setVisibility(View.VISIBLE);
+            iv_update_logo.setImageResource(R.mipmap.seal_new);
+            tv_update_txt.setText("请认真如实地填写以下资料！");
+            setFilesTip("请上传");
+            APIUtils.getScheme(this);
+            rl_select_installment.setOnClickListener(this);
+            state = STATE_NEW;
+            if (is_from_index) {
+                str_loan_amount = intent_before.getStringExtra("loan");
+                str_protection_date = intent_before.getStringExtra("date");
+                str_insurance_amount = intent_before.getStringExtra("insurance");
+                et_insurance_amount.setText(str_insurance_amount);
+                tv_protection_date.setText(str_protection_date);
+                tv_protection_date.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.gray_3));
+                tv_installment.setText(str_installment);
+                tv_installment.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.gray_3));
+                tv_loan_amount.setText("可贷款额度：￥ " + str_loan_amount);
+            }
+        } else {
+            tv_title.setText("贷款申请详情");
+            setFilesTip("查看");
+            queryDetail();
+        }
+    }
+
+
+    //获取贷款申请详情
+    public void queryDetail()
+    {
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("id", loan_id);
+        httpUtils.send(HttpRequest.HttpMethod.POST, WebServiceUrl.WEBSERVICE_URL + WebServiceUrl.LOAN_DETAIL_URL, params, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                String json = responseInfo.result;
+                Log.i("123", "json:" + json);
+                JSONObject obj = JSON.parseObject(json);
+                loan = JSON.parseObject(obj.toJSONString(), Loan.class);
+                state = loan.getState();
+                str_phone = loan.getPhone();
+                str_name = loan.getName();
+                str_insurance_amount = loan.getInsurance_amount();
+                str_protection_date = loan.getProtection_date();
+                str_installment = loan.getInstallment();
+                str_loan_amount = loan.getLoan_amount();
+
+                et_apply_phone.setText(str_phone);
+                et_apply_name.setText(str_name);
+                et_insurance_amount.setText(str_insurance_amount);
+                tv_protection_date.setText(str_protection_date);
+                tv_installment.setText(str_installment);
+                tv_loan_amount.setText("可贷款额度：￥ " + str_loan_amount);
+
+                str_warranty = loan.getWarranty();
+                str_invoice = loan.getInvoice();
+                str_care_card = loan.getCare_card();
+                str_idcard1 = loan.getIdcard1();
+                str_idcard2 = loan.getIdcard2();
+                str_bankcard1 = loan.getBankcard1();
+                str_bankcard2 = loan.getBankcard2();
+                str_face = loan.getFace();
+                str_license = loan.getLicense();
+                str_agreement = loan.getAgreement();
+                str_reason = loan.getReason();
+
+                showState();
+            }
+
+            @Override
+            public void onFailure(HttpException e, String s) {
+                T.show(AddLoanActivity.this, "服务器错误：" + s);
+            }
+        });
+    }
+
+    /**
+     * 根据loan的状态来表现页面内容
+     *
+     */
+    public void showState() {
+        int img_seal;
+        String title;
+        boolean editable = false;
+        switch (state) {
+            case STATE_WAITING:
+                img_seal = R.mipmap.seal_waiting;
+                title = "请耐心等待后台人员审核资料";
+                break;
+            case STATE_PASSED:
+                img_seal = R.mipmap.seal_passed;
+                title = "恭喜您！审核已通过";
+                break;
+            case STATE_REBUT:
+                img_seal = R.mipmap.seal_rebut;
+                title = "注意！" + str_reason;
+                tv_save.setText("提交");
+                tv_save.setVisibility(View.VISIBLE);
+                setFilesTip("请认真核实");
+                getScheme();
+                rl_select_installment.setOnClickListener(this);
+                editable = true;
+                break;
+            case STATE_REJECT:
+                img_seal = R.mipmap.seal_reject;
+                title = "很遗憾！" + str_reason;
+                break;
+            case STATE_PAID:
+                img_seal = R.mipmap.seal_paid;
+                title = "已放款";
+                break;
+            case STATE_BACK:
+                img_seal = R.mipmap.seal_back;
+                title = "已还款";
+                break;
+            case STATE_OVERDUE:
+                img_seal = R.mipmap.seal_overdue;
+                title = "注意！逾期未处理";
+                break;
+            case STATE_HANDLED:
+                img_seal = R.mipmap.seal_handled;
+                title = "逾期已处理";
+                break;
+            default:
+                img_seal = R.mipmap.seal_handled;
+                title = "";
+                break;
+        }
+
+        iv_update_logo.setImageResource(img_seal);
+        tv_update_txt.setText(title);
+
+        et_apply_name.setEnabled(editable);
+        et_apply_phone.setEnabled(editable);
+        et_insurance_amount.setEnabled(editable);
+        tv_protection_date.setEnabled(editable);
+
+    }
+
+    /*
+     * 修改所有文件右侧的提示语
+     */
+    public void setFilesTip(String tip) {
+        tv_upload_warranty.setText(tip);
+        tv_upload_invoice.setText(tip);
+        tv_upload_care_card.setText(tip);
+        tv_upload_idcard1.setText(tip);
+        tv_upload_idcard2.setText(tip);
+        tv_upload_bankcard1.setText(tip);
+        tv_upload_bankcard2.setText(tip);
+        tv_upload_face.setText(tip);
+        tv_upload_license.setText(tip);
+        tv_upload_agreement.setText(tip);
+    }
+
+    /*
+     * 获取分期方案
+     */
+    public void getScheme(){
+        if (NetWorkUtils.isNetworkAvailable(AddLoanActivity.this)) {
+            httpUtils.send(HttpRequest.HttpMethod.POST, WebServiceUrl.WEBSERVICE_URL + WebServiceUrl.SCHEME_URL, null, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    String json = responseInfo.result;
+                    int result = -1;
+                    JSONObject obj = JSON.parseObject(json);
+                    result = obj.getInteger("result");
+                    String message=obj.getString("message");
+
+                    if (result == 1) {
+                        JSONArray array = obj.getJSONArray("scheme");
+                        list_scheme = JSON.parseArray(array.toJSONString(), Scheme.class);
+                    } else {
+                        T.show(AddLoanActivity.this, message);
+                    }
+                }
+
+                @Override
+                public void onFailure(HttpException e, String s) {
+                    T.show(AddLoanActivity.this, "服务器错误：" + s);
+                }
+            });
+
+        } else {
+            NetWorkUtils.noNetDialog(this);
+        }
+    }
+
+    /**
+     * 获取PopipWinsow实例
+     */
+    private  void  getPopupWindow(int type){
+        popupWindow = PopupWindowUtils.destroy(popupWindow);
+
+        PopupWindowUtils.closeKeyBoard(this);
+        switch (type) {
+            case 1:
+                initPopupWindowScheme();
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    /*
+     * 初始化PopupWindowScheme
+     */
+    protected  void  initPopupWindowScheme(){
+        final View popipWindow_view = getLayoutInflater().inflate(R.layout.pop_add_loan_activity_scheme,null,false);
+        //创建Popupwindow 实例
+        popupWindow = PopupWindowUtils.newPop(popipWindow_view);
+        //点击其他地方消失
+        popipWindow_view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (popipWindow_view != null && popipWindow_view.isShown()) {
+                    popupWindow = PopupWindowUtils.destroy(popupWindow);
+                }
+                return false;
+            }
+        });
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                PopupWindowUtils.setBg(1f, getWindow());
+            }
+        });
+        list_scheme = APIUtils.list_scheme;
+        if (list_scheme.size() > 0) {
+            adapter = new SchemeAdapter(list_scheme, this);
+            ListView lv_scheme = (ListView) popipWindow_view.findViewById(R.id.scheme_list);
+            TextView tv_cancel = (TextView) popipWindow_view.findViewById(R.id.cancel);
+
+            lv_scheme.setAdapter(adapter);
+            lv_scheme.setOnItemClickListener(this);
+            tv_cancel.setOnClickListener(this);
+
+        }
+    }
+
+    /**
+     * 检验商业险金额数据是否准备好
+     */
+    public boolean checkMount() {
+        str_insurance_amount = et_insurance_amount.getText().toString();
+        if (TextUtils.isEmpty(str_insurance_amount)) {
+            return false;
+        } else {
+            Double amount = Double.parseDouble(str_insurance_amount);
+            if (amount > 0) {
+                str_insurance_amount = String.format("%.2f", amount);
+                et_insurance_amount.setText(str_insurance_amount);
+                return true;
+            } else {
+                et_insurance_amount.setText("");
+                T.show(this, "商业险金额无效");
+                return false;
+            }
+        }
+
+    }
+
+    /**
+     * 检验起保日期数据是否准备好
+     */
+    public boolean checkDate() {
+        str_protection_date = tv_protection_date.getText().toString();
+        if (TextUtils.isEmpty(str_protection_date) || str_protection_date.equals("商业险保单起保日期")) {
+            return false;
+        } else {
+            try {
+                date_insurance = format.parse(str_protection_date);
+                insurance_millis = date_insurance.getTime();
+            } catch (ParseException e) {
+                tv_protection_date.setText("");
+                T.show(this, "起保日期格式无效");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 计算可贷款额度
+     * 当前日期往后推5天，按保单剩余天数估算保单价值，未到起保日期的扣除3%的手续费
+     */
+    public void countLoanMount() {
+        double insurance_amount = Double.parseDouble(str_insurance_amount);
+        java.util.Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, 5);
+        now_5_millis = c.getTimeInMillis();
+        if (insurance_millis < now_5_millis) {
+            long day_pass =  (now_5_millis - insurance_millis) / (1000 * 60 * 60 * 24);
+            loan_amount = insurance_amount * ((365.0 - day_pass) / 365.0);
+        } else {
+            loan_amount = insurance_amount *  0.97;
+        }
+
+        str_loan_amount = String.format("%.2f", loan_amount);
+        tv_loan_amount.setText("可贷款额度：￥ " + str_loan_amount);
+
+    }
+
+
+    /**
+     * 检查数据
+     */
+    public Boolean checkData() {
+        str_name = et_apply_name.getText().toString();
+        if (TextUtils.isEmpty(str_name)) {
+            T.show(this, "借款人姓名不得为空");
+            return false;
+        }
+        str_phone = et_apply_phone.getText().toString();
+        if (TextUtils.isEmpty(str_phone)) {
+            T.show(this, "借款人手机不得为空");
+            return false;
+        } else {
+            if (!CheckFormatUtils.check(CheckFormatUtils.PHONE, str_phone)) {
+                T.show(this, "手机号码格式不正确");
+                return false;
+            }
+        }
+        str_insurance_amount = et_insurance_amount.getText().toString();
+        if (TextUtils.isEmpty(str_insurance_amount)) {
+            T.show(this, "商业险金额不得为空");
+            return false;
+        }
+        str_protection_date = tv_protection_date.getText().toString();
+        if (TextUtils.isEmpty(str_protection_date)||str_protection_date.equals("商业险保单起保日期")) {
+            T.show(this, "起保日期不得为空");
+            return false;
+        }
+        str_installment = tv_installment.getText().toString();
+        if (TextUtils.isEmpty(str_installment)) {
+            T.show(this, "分期数不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_warranty)) {
+            T.show(this, "保单不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_invoice)) {
+            T.show(this, "车险发票不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_care_card)) {
+            T.show(this, "保卡不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_idcard1)) {
+            T.show(this, "身份证正面照片不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_idcard2)) {
+            T.show(this, "身份证背面照片不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_bankcard1)) {
+            T.show(this, "银行卡正面照片不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_bankcard2)) {
+            T.show(this, "银行卡背面照片不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_face)) {
+            T.show(this, "面签照片不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_license)) {
+            T.show(this, "行驶证照片不得为空");
+            return false;
+        }
+        if (TextUtils.isEmpty(str_agreement)) {
+            T.show(this, "借贷协议不得为空");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 检查界面是否被编辑
+     */
+    public void checkEditData() {
+        str_name = et_apply_name.getText().toString();
+        str_phone = et_apply_phone.getText().toString();
+        str_insurance_amount = et_insurance_amount.getText().toString();
+        str_protection_date = tv_protection_date.getText().toString();
+        str_installment = tv_installment.getText().toString();
+        if(TextUtils.isEmpty(str_name)&&TextUtils.isEmpty(str_phone)&&TextUtils.isEmpty(str_insurance_amount)&&TextUtils.isEmpty(str_loan_amount)&&
+                str_protection_date.equals("商业险保单起保日期")&&str_installment.equals("选择分期")&&TextUtils.isEmpty(str_warranty)&&TextUtils.isEmpty(str_invoice)&&
+                TextUtils.isEmpty(str_care_card)&&TextUtils.isEmpty(str_idcard1)&&TextUtils.isEmpty(str_idcard2)&&TextUtils.isEmpty(str_bankcard1)&&
+                TextUtils.isEmpty(str_bankcard2)&&TextUtils.isEmpty(str_face)&&TextUtils.isEmpty(str_license)&&TextUtils.isEmpty(str_agreement)
+                )
+        {
+            isNull=true;
+        }
+    }
+
+    //将草稿信息填写到本地数据库
+    public void saveLoan(DbUtils db)
+    {
+      Loan loan=new Loan();
+        loan.setPhone(str_phone);
+        loan.setAgreement(str_agreement);
+        loan.setBankcard1(str_bankcard1);
+        loan.setBankcard2(str_bankcard2);
+        loan.setCare_card(str_care_card);
+        loan.setFace(str_face);
+        loan.setIdcard1(str_idcard1);
+        loan.setIdcard2(str_idcard2);
+        loan.setWarranty(str_warranty);
+        loan.setProtection_date(str_protection_date);
+        loan.setInvoice(str_invoice);
+        loan.setLicense(str_license);
+        loan.setName(str_name);
+        loan.setLoan_amount(str_loan_amount);
+        loan.setInsurance_amount(str_insurance_amount);
+        loan.setInstallment(str_installment);
+        loan.setEdit_date(DateUtils.formatPhotoDate(System.currentTimeMillis()));
+        DBManager.saveLoan(db, loan);
+    }
+
+    /**
+     * 上传新增贷款申请资料
+     */
+    public void addApply() {
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("staffid", PreferenceUtils.loadUser(this, PreferenceUtils.STAFFID));
+        params.addBodyParameter("name", str_name);
+        params.addBodyParameter("phone", str_phone);
+        params.addBodyParameter("installment", str_installment);
+        params.addBodyParameter("insurance_amount", str_insurance_amount);
+        params.addBodyParameter("protection_date", str_protection_date);
+        params.addBodyParameter("loan_amount", str_loan_amount);
+        params.addBodyParameter("warranty", str_warranty);
+        params.addBodyParameter("invoice", str_invoice);
+        params.addBodyParameter("care_card", str_care_card);
+        params.addBodyParameter("idcard1", str_idcard1);
+        params.addBodyParameter("idcard2", str_idcard2);
+        params.addBodyParameter("bankcard1", str_bankcard1);
+        params.addBodyParameter("bankcard2", str_bankcard2);
+        params.addBodyParameter("face", str_face);
+        params.addBodyParameter("license", str_license);
+        params.addBodyParameter("agreement", str_agreement);
+        httpUtils.send(HttpRequest.HttpMethod.POST, WebServiceUrl.WEBSERVICE_URL + WebServiceUrl.ADD_LOAN_URL, params, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                String json = responseInfo.result;
+                Log.i("123", "json:" + json);
+                int result = -1;
+                JSONObject obj = JSON.parseObject(json);
+                result = obj.getInteger("result");
+                String message = obj.getString("message");
+                if (result == 1) {
+                    //上传成功，保存图片地址
+                    T.show(AddLoanActivity.this, "提交成功");
+                    finish();
+
+                } else {
+                    //上传失败
+                    T.show(AddLoanActivity.this, message);
+                }
+            }
+
+            @Override
+            public void onFailure(HttpException e, String s) {
+                T.show(AddLoanActivity.this, "服务器错误" + s);
+            }
+        });
+
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(this, UploadActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("state",state);
+
+        switch (v.getId()) {
+            case R.id.add_warranty:
+                bundle.putInt("file", UploadActivity.FILE_WARRANTY);
+                if (!TextUtils.isEmpty(str_warranty)) {
+                    bundle.putString("imgUrl", str_warranty);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_WARRANTY);
+                break;
+            case R.id.add_invoice:
+                bundle.putInt("file", UploadActivity.FILE_INVOICE);
+                bundle.putString("imgUrl", str_invoice);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_INVOICE);
+                break;
+            case R.id.add_care_card:
+                bundle.putInt("file", UploadActivity.FILE_CARE_CARD);
+                bundle.putString("imgUrl", str_care_card);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_CARE_CARD);
+                break;
+            case R.id.add_idcard1:
+                bundle.putInt("file", UploadActivity.FILE_IDCARD1);
+                if (!TextUtils.isEmpty(str_idcard1)) {
+                    bundle.putString("imgUrl", str_idcard1);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_IDCARD1);
+                break;
+            case R.id.add_idcard2:
+                bundle.putInt("file", UploadActivity.FILE_IDCARD2);
+                if (!TextUtils.isEmpty(str_idcard2)) {
+                    bundle.putString("imgUrl", str_idcard2);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_IDCARD2);
+                break;
+            case R.id.add_bankcard1:
+                bundle.putInt("file", UploadActivity.FILE_BANKCARD1);
+                if (!TextUtils.isEmpty(str_bankcard1)) {
+                    bundle.putString("imgUrl", str_bankcard1);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_BANKCARD1);
+                break;
+            case R.id.add_bankcard2:
+                bundle.putInt("file", UploadActivity.FILE_BANKCARD2);
+                if (!TextUtils.isEmpty(str_bankcard2)) {
+                    bundle.putString("imgUrl", str_bankcard2);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_BANKCARD2);
+                break;
+            case R.id.add_face:
+                bundle.putInt("file", UploadActivity.FILE_FACE);
+                if (!TextUtils.isEmpty(str_face)) {
+                    bundle.putString("imgUrl", str_face);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_FACE);
+                break;
+            case R.id.add_license:
+                bundle.putInt("file", UploadActivity.FILE_LICENSE);
+                if (!TextUtils.isEmpty(str_license)) {
+                    bundle.putString("imgUrl", str_license);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_LICENSE);
+                break;
+            case R.id.add_agreement:
+                bundle.putInt("file", UploadActivity.FILE_AGREEMENT);
+                if (!TextUtils.isEmpty(str_agreement)) {
+                    bundle.putString("imgUrl", str_agreement);
+                }
+                intent.putExtras(bundle);
+                startActivityForResult(intent, UploadActivity.FILE_AGREEMENT);
+                break;
+            case R.id.comment_sure:
+                if (checkData()) {
+                    addApply();
+                }
+                break;
+            case R.id.select_installment:
+                getPopupWindow(1);
+                PopupWindowUtils.setBg(0.4f, getWindow());
+                popupWindow.showAtLocation(v, Gravity.BOTTOM, 0, 0);
+                break;
+            case R.id.cancel:
+                PopupWindowUtils.destroy(popupWindow);
+                break;
+            case R.id.rl_date:
+                PopupWindowUtils.setBg(0.4f, getWindow());
+                pwTime.showAtLocation(tv_protection_date, Gravity.BOTTOM, 0, 0, new Date());
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // 根据上面发送过去的请求码来区别
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case UploadActivity.FILE_WARRANTY:
+                    tv_upload_warranty.setText("已上传");
+                    tv_upload_warranty.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_warranty = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_INVOICE:
+                    tv_upload_invoice.setText("已上传");
+                    tv_upload_invoice.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_invoice = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_CARE_CARD:
+                    tv_upload_care_card.setText("已上传");
+                    tv_upload_care_card.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_care_card = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_IDCARD1:
+                    tv_upload_idcard1.setText("已上传");
+                    tv_upload_idcard1.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_idcard1 = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_IDCARD2:
+                    tv_upload_idcard2.setText("已上传");
+                    tv_upload_idcard2.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_idcard2 = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_BANKCARD1:
+                    tv_upload_bankcard1.setText("已上传");
+                    tv_upload_bankcard1.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_bankcard1 = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_BANKCARD2:
+                    tv_upload_bankcard2.setText("已上传");
+                    tv_upload_bankcard2.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_bankcard2 = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_FACE:
+                    tv_upload_face.setText("已上传");
+                    tv_upload_face.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_face = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_LICENSE:
+                    tv_upload_license.setText("已上传");
+                    tv_upload_license.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_license = data.getStringExtra("path");
+                    break;
+                case UploadActivity.FILE_AGREEMENT:
+                    tv_upload_agreement.setText("已上传");
+                    tv_upload_agreement.setTextColor(ContextCompat.getColor(this, R.color.qing));
+                    str_agreement = data.getStringExtra("path");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //选择不同的分期方案
+        Scheme scheme = list_scheme.get(position);
+        str_installment = String.valueOf(scheme.getInstallment());
+        tv_installment.setText(str_installment);
+        tv_installment.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.gray_3));
+        PopupWindowUtils.destroy(popupWindow);
+    }
+
+    @Override
+    public void btnClick(View view) {
+//        super.btnClick(view);
+        checkEditData();
+        if (isNull==false)
+        {
+            //返回
+            new AlertDialog.Builder(this).setTitle("是否保存为草稿？")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.i("123","开始保存");
+                            saveLoan(db);
+                            Log.i("123", "结束保存");
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 点击“返回”后的操作,这里不设置没有任何操作
+                            finish();
+                        }
+                    }).show();
+        }else {
+            finish();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        //返回
+        checkEditData();
+        if (isNull==false)
+        {
+            //返回
+            new AlertDialog.Builder(this).setTitle("是否保存为草稿？")
+                    .setIcon(android.R.drawable.ic_dialog_info)
+                    .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            saveLoan(db);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 点击“返回”后的操作,这里不设置没有任何操作
+                            finish();
+                        }
+                    }).show();
+        }else {
+            finish();
+        }
+    }
+}

@@ -1,0 +1,51 @@
+package com.minsheng.app.xunchedai.utils;
+
+import android.app.Activity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.PopupWindow;
+
+/**
+ * 作者：无名小强
+ * 邮箱：zhangqiangoffice@163.com
+ * 日期：2016/7/7
+ */
+public class PopupWindowUtils {
+
+    /*
+     * 销毁PopipWinsow实例
+     */
+    public static PopupWindow destroy(PopupWindow popupWindow){
+        if (null != popupWindow){
+            popupWindow.dismiss();
+        }
+        return null;
+    }
+
+    /*
+     * 设置背景遮罩颜色
+     */
+    public static void setBg(float bgAlpha, Window window) {
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.alpha = bgAlpha; //0.0-1.0
+        window.setAttributes(lp);
+    }
+
+    /*
+     * 关闭软键盘
+     */
+    public static void closeKeyBoard(Activity activity) {
+        if(activity.getCurrentFocus()!=null) {
+            ((InputMethodManager) activity.getSystemService(activity.getBaseContext().INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    public static PopupWindow newPop(View popipWindow_view) {
+        PopupWindow pop = new PopupWindow(popipWindow_view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,true);
+        return pop;
+    }
+}

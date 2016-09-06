@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <!--白色-->
+    <color name="white">#ffffff</color>
+    <!--灰色-->
+    <color name="gray_d">#dddddd</color>
+    <color name="gray">#cbcbcb</color>
+    <color name="gray_3">#333333</color>
+    <color name="gray_ground">#6f7781</color>
+    <color name="gray_login">#d9d9d9</color>
+    <!--字体灰-->
+    <color name="txt_gray">#a8a8a8</color>
+    <!--字体黑-->
+    <color name="txt_black">#363636</color>
+    <!--蓝色-->
+    <color name="blue">#3971c5</color>
+    <color name="light_blue">#5a8fd0</color>
+    <!--米白色-->
+    <color name="mibai">#f2f2f2</color>
+    <!--青色-->
+    <color name="qing">#8bc013</color>
+    <!--橘色-->
+    <color name="orange">#ffd1a0</color>
+    <color name="deep_orange">#ff9408</color>
+    <!--红色-->
+    <color name="red">#f34d52</color>
+    <color name="light_red">#ffb6a6</color>
+    <color name="deep_red">#b31f16</color>
+    <color name="txt_red">#f9332b</color>
+    <color name="txt_orange">#f68b00</color>
+    <color name="txt_green">#1ec2d6</color>
+    <!--绿色-->
+    <color name="green">#0e9a26</color>
+    <!--银行卡蓝色背景 -->
+    <color name="blue_bank_card">#3c9ed4</color>
+    <color name="txt_blue">#487cc8</color>
+
+    <color name="pull_label_text_color">#888888</color>
+    <color name="start_color">#00baff</color>
+    <color name="center_color">#2e72ed</color>
+    <color name="end_color">#6c00ff</color>
+
+    <color name="wheel_timebtn_nor">#54a3fa</color>
+    <color name="wheel_timebtn_pre">#CCCCCC</color>
+    <color name="widget_bg">#F2F2F2</color>
+
+</resources>

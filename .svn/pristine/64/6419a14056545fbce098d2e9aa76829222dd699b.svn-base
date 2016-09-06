@@ -1,0 +1,378 @@
+package com.minsheng.app.xunchedai.loan.activities;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
+import com.minsheng.app.xunchedai.R;
+import com.minsheng.app.xunchedai.base.BaseActivity;
+import com.minsheng.app.xunchedai.utils.PreferenceUtils;
+import com.minsheng.app.xunchedai.utils.T;
+import com.minsheng.app.xunchedai.utils.WebServiceUrl;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+/**
+ * Created by Administrator on 2016/8/5.
+ * 贷款申请详情界面
+ */
+public class UploadActivity extends BaseActivity implements View.OnClickListener {
+
+    public static final int FILE_WARRANTY = 0;
+    public static final int FILE_INVOICE = 1;
+    public static final int FILE_CARE_CARD = 2;
+    public static final int FILE_IDCARD1 = 3;
+    public static final int FILE_IDCARD2 = 4;
+    public static final int FILE_BANKCARD1 = 5;
+    public static final int FILE_BANKCARD2 = 6;
+    public static final int FILE_LICENSE = 7;
+    public static final int FILE_AGREEMENT_APPLY = 8;
+    public static final int FILE_AGREEMENT_ENTRUST = 9;
+    public static final int FILE_AGREEMENT_TRANSFER = 11;
+
+
+    private ImageView iv_back, iv_add_img, iv_illustration;
+    private TextView tv_title, tv_tip_title, tv_tips;
+    private FrameLayout fl_from_camera, fl_from_album;
+    private RelativeLayout rl_bottom;
+
+    private Uri headUri;
+    private File tempImageFile;
+    private int int_file, state;
+    private String imgUrl;
+    private HttpUtils httpUtils;
+    private String imageUrl="";
+
+    /* 图片文件 */
+    private static final String IMAGE_FILE_NAME = "temp_image.jpg";
+    private static final String IMAGE_HEAD_FILE_NAME = "temp_head_image.jpg";
+
+    /* 请求识别码 */
+    private static final int CODE_GALLERY_REQUEST = 0xa0;
+    private static final int CODE_CAMERA_REQUEST = 0xa1;
+    private static final int CODE_RESULT_REQUEST = 0xa2;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_upload);
+        initView();
+
+    }
+
+    /**
+     * 初始化组件
+     */
+    private void initView() {
+        httpUtils = new HttpUtils();
+        iv_back = (ImageView) findViewById(R.id.activity_concat_back);
+        iv_illustration = (ImageView) findViewById(R.id.illustration);
+        iv_add_img = (ImageView) findViewById(R.id.add_img);
+        tv_title = (TextView) findViewById(R.id.tv_activity_concat_title);
+        tv_tip_title = (TextView) findViewById(R.id.tip_title);
+        tv_tips = (TextView) findViewById(R.id.tips);
+        rl_bottom= (RelativeLayout) findViewById(R.id.rl_bottom);
+
+        Bundle bundle = getIntent().getExtras();
+        int_file = bundle.getInt("file");
+        state = bundle.getInt("state");
+        imgUrl = bundle.getString("imgUrl");
+        if (!TextUtils.isEmpty(imgUrl))
+        {
+            show();
+        }
+
+        switch (int_file) {
+            case FILE_WARRANTY:
+                tv_tip_title.setText("保单资料");
+                tv_tips.setText("保单的投保人或约定受益人为民盛保险代理有限公司");
+                iv_illustration.setImageResource(R.mipmap.file_warranty);
+                break;
+            case FILE_INVOICE:
+                tv_tip_title.setText("车险发票");
+                tv_tips.setText("发票信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_invoice);
+                break;
+            case FILE_CARE_CARD:
+                tv_tip_title.setText("保卡");
+                tv_tips.setText("保卡信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_care_card);
+                break;
+            case FILE_IDCARD1:
+                tv_tip_title.setText("借款人身份证正面");
+                tv_tips.setText("证件信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_idcard1);
+                break;
+            case FILE_IDCARD2:
+                tv_tip_title.setText("借款人身份证背面");
+                tv_tips.setText("证件信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_idcard2);
+                break;
+            case FILE_BANKCARD1:
+                tv_tip_title.setText("借款人银行卡正面");
+                tv_tips.setText("证件信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_bankcard1);
+                break;
+            case FILE_BANKCARD2:
+                tv_tip_title.setText("借款人银行卡背面");
+                tv_tips.setText("证件信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_bankcard2);
+                break;
+            case FILE_LICENSE:
+                tv_tip_title.setText("行驶证");
+                tv_tips.setText("证件信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_license);
+                break;
+            case FILE_AGREEMENT_APPLY:
+                tv_tip_title.setText("借贷申请协议");
+                tv_tips.setText("上传借款人手持借贷申请协议的正面头部和上半身照片");
+                iv_illustration.setImageResource(R.mipmap.file_face);
+                break;
+            case FILE_AGREEMENT_ENTRUST:
+                tv_tip_title.setText("三方受托协议");
+                tv_tips.setText("文件信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_agreement);
+                break;
+            case FILE_AGREEMENT_TRANSFER:
+                tv_tip_title.setText("划扣协议");
+                tv_tips.setText("文件信息必须清晰，不能遮挡；请勿使用任何软件编辑修改");
+                iv_illustration.setImageResource(R.mipmap.file_agreement);
+                break;
+            default:
+                break;
+        }
+
+
+        tv_title.setText("上传资料");
+        iv_back.setVisibility(View.VISIBLE);
+        fl_from_camera = (FrameLayout) findViewById(R.id.from_camera);
+        fl_from_album = (FrameLayout) findViewById(R.id.from_album);
+
+        fl_from_camera.setOnClickListener(this);
+        fl_from_album.setOnClickListener(this);
+
+    }
+
+    //判断是否中文字
+    public boolean checkChinese(char word) {
+        if ((word >= 0x4e00) && (word <= 0x9fbb)) return true;
+        else return false;
+    }
+
+    //显示详情
+    public void show()
+    {
+        try {
+            for (int i=0;i<imgUrl.length();i++)
+            {
+                if (checkChinese(imgUrl.charAt(i)))
+                {
+                    imageUrl+=URLEncoder.encode(imgUrl.substring(i,i+1),"utf-8");
+                }else
+                {
+                    imageUrl+=imgUrl.substring(i,i+1);
+                }
+            }
+
+            Picasso.with(this).load(WebServiceUrl.IMAGE_URL+imageUrl)
+                    .error(R.drawable.icon_loaning_error)
+                    .placeholder(R.drawable.icon_loading)
+                    .into(iv_add_img);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (state != AddLoanActivity.STATE_REBUT)
+        {
+            rl_bottom.setVisibility(View.GONE);
+        }
+        iv_add_img.setOnClickListener(this);
+    }
+
+    //通过Uri获得bitmap的方法
+    public static Bitmap getBitmapFromUri(Uri uri,Context mContext) {
+        try {
+            // 读取uri所在的图片
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), uri);
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    // 从本地相册选取图片
+    private void choseImageFromGallery() {
+        Intent intentFromGallery = new Intent();
+        // 设置文件类型
+        intentFromGallery.setType("image/*");
+        intentFromGallery.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intentFromGallery, CODE_GALLERY_REQUEST);
+    }
+
+    // 启动手机相机拍摄照片作为头像
+    private void choseImageFromCameraCapture() {
+        Intent intentFromCapture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // 判断存储卡是否可用，存储照片文件
+        if (hasSdcard()) {
+            intentFromCapture.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory(), IMAGE_FILE_NAME)));
+        }
+
+        startActivityForResult(intentFromCapture, CODE_CAMERA_REQUEST);
+    }
+
+    /**
+     * 裁剪原始的图片
+     */
+    public void cropRawPhoto(Uri uri) {
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+
+        tempImageFile = new File(Environment.getExternalStorageDirectory(), IMAGE_HEAD_FILE_NAME);
+        headUri = Uri.fromFile(tempImageFile);
+
+        // 设置裁剪
+        intent.putExtra("crop", "true");
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, headUri);
+        startActivityForResult(intent, CODE_RESULT_REQUEST);
+    }
+
+    /**
+     * 检查设备是否存在SDCard的工具方法
+     */
+    public static boolean hasSdcard() {
+        String state = Environment.getExternalStorageState();
+        if (state.equals(Environment.MEDIA_MOUNTED)) {
+            // 有存储的SDCard
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 提取保存裁剪之后的图片数据，并设置图像部分的View
+     */
+    private void setImageToImageView() {
+        if(headUri != null){
+            Bitmap bitmap = getBitmapFromUri(headUri, getApplicationContext());
+            iv_add_img.setImageBitmap(bitmap);
+            uploadImg();
+        }
+    }
+
+
+    //上传图片到服务器
+    public void uploadImg()
+    {
+        RequestParams params=new RequestParams();
+        params.addQueryStringParameter("staffid", PreferenceUtils.loadUser(this, PreferenceUtils.STAFFID));
+        params.addBodyParameter("photo", tempImageFile);
+        Log.i("123",PreferenceUtils.loadUser(this, PreferenceUtils.STAFFID));
+        httpUtils.send(HttpRequest.HttpMethod.POST, WebServiceUrl.WEBSERVICE_URL + WebServiceUrl.UPLOAD_IMG_URL, params, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                String json = responseInfo.result;
+                Log.i("123", "json:" + json);
+                int result = -1;
+                JSONObject obj = JSON.parseObject(json);
+                result = obj.getInteger("result");
+                String message = obj.getString("message");
+                if (result == 1) {
+                    //上传成功，保存图片地址
+                    T.show(UploadActivity.this, "上传成功");
+                    Intent intent = new Intent();
+                    intent.putExtra("path", obj.getString("url"));
+                    UploadActivity.this.setResult(RESULT_OK, intent);
+                } else {
+                    //上传失败
+                    T.show(UploadActivity.this, message + " 请重新选取！");
+                }
+            }
+
+            @Override
+            public void onFailure(HttpException e, String s) {
+                T.show(UploadActivity.this, "服务器错误" + s);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,Intent intent) {
+
+        // 用户没有进行有效的设置操作，返回
+        if (resultCode == RESULT_CANCELED) {
+            T.show(getApplication(), "取消");
+            return;
+        }
+
+        switch (requestCode) {
+            case CODE_GALLERY_REQUEST:
+                cropRawPhoto(intent.getData());
+                break;
+            case CODE_CAMERA_REQUEST:
+                if (hasSdcard()) {
+                    File tempFile = new File(Environment.getExternalStorageDirectory(), IMAGE_FILE_NAME);
+                    cropRawPhoto(Uri.fromFile(tempFile));
+                } else {
+                    T.show(getApplication(), "没有SDCard!");
+                }
+                break;
+            case CODE_RESULT_REQUEST:
+                if (intent != null) {
+                    setImageToImageView();
+                }
+
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.from_album:
+                choseImageFromGallery();
+                break;
+            case R.id.from_camera:
+                choseImageFromCameraCapture();
+                break;
+            case R.id.add_img:
+                Intent intent=new Intent(this,ShowPicActivity.class);
+                intent.putExtra("imageUrl",imageUrl);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+
+    }
+}
